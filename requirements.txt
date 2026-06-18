@@ -1,0 +1,7 @@
+# Desafíos 1, 2 y 3 no requieren dependencias externas (solo librería estándar / SQL).
+#
+# Desafío 4 — motor de clasificación con IA:
+openai>=1.0.0
+
+# Testing:
+pytest>=8.0.0
