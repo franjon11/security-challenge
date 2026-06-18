@@ -8,3 +8,7 @@ venv/
 
 # Entorno / secretos (nunca commitear la API key)
 .env
+
+# Enunciados del challenge (se mantienen localmente, no se publican)
+enunciado_en.pdf
+enunciado_es.md

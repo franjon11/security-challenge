@@ -1,7 +1,6 @@
 # Mercado Libre — Challenge Técnico DataSec (Sr. Cybersecurity)
 
-Soluciones a los 4 desafíos del challenge técnico. El resumen en español del
-enunciado está en [`RESUMEN_ES.md`](RESUMEN_ES.md).
+Soluciones a los 4 desafíos del challenge técnico.
 
 ## Estructura
 
@@ -13,7 +12,6 @@ enunciado está en [`RESUMEN_ES.md`](RESUMEN_ES.md).
 ├── challenge_4_classification_engine/   # Desafío 4 — Motor de clasificación con IA
 ├── tests/                         # Tests de los desafíos 1 y 2
 ├── requirements.txt
-├── RESUMEN_ES.md
 └── README.md
 ```
 
