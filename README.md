@@ -28,6 +28,8 @@ Usa solo librería estándar (`urllib`).
 
 ### 3. Reporte de fallas — `applicant_query.sql`
 Clientes con más de 3 eventos `failure`, ordenados desc. (MySQL 8.x).
+Tiene tests automáticos que ejecutan la consulta real contra SQLite en memoria
+(validan la lógica sin necesidad de levantar un MySQL).
 
 ### 4. Motor de clasificación con IA — `challenge_4_classification_engine/`
 Clasifica textos por sensibilidad, categoría y riesgo con un LLM compatible con
@@ -46,6 +48,6 @@ pip install -r requirements.txt
 pytest
 ```
 
-> Los tests de los desafíos 1, 2 y 4 corren sin red ni API key (la API y el LLM
-> se mockean). El desafío 2 contra la API real se prueba con
-> `python solution_best_in_genre.py`.
+> Todos los tests corren sin red, sin API key y sin servidor de base de datos:
+> la API HTTP y el LLM se mockean, y el SQL se ejecuta contra SQLite en memoria.
+> El desafío 2 contra la API real se prueba con `python solution_best_in_genre.py`.
