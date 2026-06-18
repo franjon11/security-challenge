@@ -25,6 +25,7 @@ Formato de salida exacto:
   "sensitivity": "<una de: %(sensitivities)s>",
   "category": "<una de: %(categories)s>",
   "risk": "<una de: %(risks)s>",
+  "confidence": <número entre 0.0 y 1.0 con tu nivel de confianza>,
   "rationale": "<justificación breve>"
 }
 """ % {

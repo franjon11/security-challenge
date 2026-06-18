@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
 
 from .config import Config
@@ -48,7 +49,16 @@ def main(argv: list[str] | None = None) -> int:
         nargs="*",
         help="Texto(s) a clasificar. Si se omite, se lee desde stdin (una línea por texto).",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Muestra logs de progreso (con los datos sensibles redactados).",
+    )
     args = parser.parse_args(argv)
+
+    if args.verbose:
+        logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
     texts = _read_inputs(args.texts)
     if not texts:

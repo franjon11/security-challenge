@@ -1,0 +1,8 @@
+El horario de atención al público es de 9 a 18 hs.
+Mi número de tarjeta es 4111 1111 1111 1111 y vence en 09/27.
+Usuario: admin Password: hunter2!
+El DNI del titular es 30.123.456.
+Reporte trimestral de ventas internas del equipo de marketing.
+Historia clínica: paciente con diagnóstico de hipertensión.
+API_KEY=sk-or-v1-abcdef0123456789abcdef0123456789
+Receta del día: tarta de manzana con canela.

@@ -84,6 +84,7 @@ class ClassificationResult:
         category: categoría asignada.
         risk: nivel de riesgo asignado.
         rationale: breve justificación generada por el modelo.
+        confidence: confianza del modelo en [0.0, 1.0], o None si no la informó.
     """
 
     text: str
@@ -91,6 +92,7 @@ class ClassificationResult:
     category: Category
     risk: RiskLevel
     rationale: str
+    confidence: float | None = None
 
     def to_dict(self) -> dict:
         """Serializa el resultado a un dict con valores string (apto para JSON)."""

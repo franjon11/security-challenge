@@ -17,6 +17,8 @@ legible, testeable y desacoplado del proveedor:
 | `prompts.py` | Construcción del prompt a partir de la taxonomía. |
 | `llm_client.py` | Interfaz `LLMClient` + implementación OpenAI-compatible. |
 | `engine.py` | Orquesta: prompt → LLM → parseo → validación → resultado tipado. |
+| `retry.py` | Reintentos con backoff exponencial (genérico y testeable). |
+| `redaction.py` | Enmascara datos sensibles antes de loguear. |
 | `cli.py` | Demo en vivo por línea de comandos. |
 | `tests/` | Tests con un cliente LLM falso (sin red). |
 
@@ -30,6 +32,18 @@ verdad para la taxonomía (el prompt y la validación se derivan de los mismos e
 - **Categoría:** `PII`, `PCI`, `PHI`, `CREDENTIALS`, `FINANCIAL`, `INTELLECTUAL_PROPERTY`, `GENERAL`
 - **Riesgo:** `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
 
+## Features adicionales
+
+- **Confianza (`confidence`)**: cada clasificación incluye un score 0.0–1.0 (se
+  valida y se recorta al rango).
+- **Reintentos con backoff**: ante timeouts, rate limits o errores 5xx el cliente
+  reintenta automáticamente (configurable con `LLM_MAX_ATTEMPTS`).
+- **Soporte `.env`**: si existe un `.env` y `python-dotenv` está instalado, se
+  cargan las variables automáticamente (la API key nunca se commitea).
+- **Logging con redacción**: con `-v` se ven logs de progreso, pero los datos
+  sensibles (tarjetas, DNI, emails, tokens) se enmascaran antes de loguearse.
+- **`muestras.txt`**: set de ejemplos listo para la demo.
+
 ## Uso (demo en vivo)
 
 1. Instalar dependencias:
@@ -38,13 +52,14 @@ verdad para la taxonomía (el prompt y la validación se derivan de los mismos e
    pip install -r ../requirements.txt
    ```
 
-2. Configurar la API key (OpenRouter o compatible):
+2. Configurar la API key (OpenRouter o compatible), por env var o `.env`:
 
    ```bash
    export LLM_API_KEY="sk-or-..."
    # Opcionales:
    export LLM_BASE_URL="https://openrouter.ai/api/v1"
    export LLM_MODEL="openai/gpt-4o-mini"
+   export LLM_MAX_ATTEMPTS="3"
    ```
 
 3. Ejecutar:
@@ -53,8 +68,12 @@ verdad para la taxonomía (el prompt y la validación se derivan de los mismos e
    # Un texto
    python -m challenge_4_classification_engine.cli "Mi tarjeta es 4111 1111 1111 1111"
 
-   # Varias muestras desde un archivo (una por línea)
-   cat muestras.txt | python -m challenge_4_classification_engine.cli
+   # Con logs (datos sensibles redactados)
+   python -m challenge_4_classification_engine.cli -v "DNI 30.123.456"
+
+   # Varias muestras desde el archivo de ejemplo (una por línea)
+   cat challenge_4_classification_engine/muestras.txt | \
+     python -m challenge_4_classification_engine.cli
    ```
 
 Salida (JSON):
@@ -66,7 +85,8 @@ Salida (JSON):
     "sensitivity": "RESTRICTED",
     "category": "PCI",
     "risk": "CRITICAL",
-    "rationale": "Contiene un número de tarjeta de crédito."
+    "rationale": "Contiene un número de tarjeta de crédito.",
+    "confidence": 0.97
   }
 ]
 ```

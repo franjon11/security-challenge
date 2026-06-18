@@ -2,6 +2,7 @@
 #
 # Desafío 4 — motor de clasificación con IA:
 openai>=1.0.0
+python-dotenv>=1.0.0   # opcional: carga automática de un archivo .env
 
 # Testing:
 pytest>=8.0.0

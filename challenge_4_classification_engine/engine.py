@@ -8,6 +8,7 @@ respuesta contra la taxonomía y devuelve un `ClassificationResult` tipado.
 from __future__ import annotations
 
 import json
+import logging
 
 from .llm_client import LLMClient
 from .models import (
@@ -17,6 +18,9 @@ from .models import (
     SensitivityLevel,
 )
 from .prompts import SYSTEM_PROMPT, build_user_prompt
+from .redaction import redact
+
+logger = logging.getLogger(__name__)
 
 
 class ClassificationError(Exception):
@@ -51,9 +55,21 @@ class DataClassifier:
         if not text or not text.strip():
             raise ValueError("El texto a clasificar no puede estar vacío.")
 
+        # Se loguea el texto redactado para no filtrar el dato sensible.
+        logger.info("Clasificando texto: %s", redact(text))
+
         raw_response = self._client.complete(SYSTEM_PROMPT, build_user_prompt(text))
         payload = self._parse_json(raw_response)
-        return self._to_result(text, payload)
+        result = self._to_result(text, payload)
+
+        logger.info(
+            "Resultado: sensitivity=%s category=%s risk=%s confidence=%s",
+            result.sensitivity.value,
+            result.category.value,
+            result.risk.value,
+            result.confidence,
+        )
+        return result
 
     def classify_many(self, texts: list[str]) -> list[ClassificationResult]:
         """
@@ -104,6 +120,21 @@ class DataClassifier:
                 category=Category.parse(payload.get("category", "")),
                 risk=RiskLevel.parse(payload.get("risk", "")),
                 rationale=str(payload.get("rationale", "")).strip(),
+                confidence=DataClassifier._parse_confidence(payload.get("confidence")),
             )
         except ValueError as exc:
             raise ClassificationError(str(exc)) from exc
+
+    @staticmethod
+    def _parse_confidence(value: object) -> float | None:
+        """
+        Normaliza la confianza a un float en [0.0, 1.0].
+
+        Devuelve None si el modelo no la informó o no es numérica, y recorta
+        (clamp) los valores fuera de rango.
+        """
+        try:
+            confidence = float(value)  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            return None
+        return max(0.0, min(1.0, confidence))

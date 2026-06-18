@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from .config import Config
+from .retry import call_with_retries
 
 
 class LLMClient(Protocol):
@@ -51,7 +52,29 @@ class OpenAICompatibleClient:
         )
 
     def complete(self, system_prompt: str, user_prompt: str) -> str:
-        """Llama al endpoint de chat completions y devuelve el texto de la respuesta."""
+        """
+        Llama al endpoint de chat completions y devuelve el texto de la respuesta.
+
+        Reintenta automáticamente ante errores transitorios (timeout, problemas
+        de conexión, rate limit o errores 5xx) con backoff exponencial.
+        """
+        import openai
+
+        retryable = (
+            openai.APITimeoutError,
+            openai.APIConnectionError,
+            openai.RateLimitError,
+            openai.InternalServerError,
+        )
+        return call_with_retries(
+            lambda: self._request(system_prompt, user_prompt),
+            max_attempts=self._config.max_attempts,
+            base_delay=self._config.retry_base_delay,
+            retryable=retryable,
+        )
+
+    def _request(self, system_prompt: str, user_prompt: str) -> str:
+        """Realiza una única llamada al modelo (sin reintentos)."""
         response = self._client.chat.completions.create(
             model=self._config.model,
             temperature=self._config.temperature,

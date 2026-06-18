@@ -36,8 +36,8 @@ class FakeClient:
 
 def test_clasificacion_valida():
     response = (
-        '{"sensitivity": "RESTRICTED", "category": "PCI", '
-        '"risk": "CRITICAL", "rationale": "Contiene un número de tarjeta."}'
+        '{"sensitivity": "RESTRICTED", "category": "PCI", "risk": "CRITICAL", '
+        '"confidence": 0.95, "rationale": "Contiene un número de tarjeta."}'
     )
     classifier = DataClassifier(FakeClient(response))
     result = classifier.classify("Mi tarjeta es 4111 1111 1111 1111")
@@ -45,7 +45,26 @@ def test_clasificacion_valida():
     assert result.sensitivity is SensitivityLevel.RESTRICTED
     assert result.category is Category.PCI
     assert result.risk is RiskLevel.CRITICAL
+    assert result.confidence == 0.95
     assert "tarjeta" in result.rationale.lower()
+
+
+def test_confidence_se_recorta_al_rango_0_1():
+    response = (
+        '{"sensitivity": "PUBLIC", "category": "GENERAL", "risk": "LOW", '
+        '"confidence": 1.5, "rationale": "x"}'
+    )
+    classifier = DataClassifier(FakeClient(response))
+    assert classifier.classify("texto").confidence == 1.0
+
+
+def test_confidence_ausente_o_invalida_queda_none():
+    response = (
+        '{"sensitivity": "PUBLIC", "category": "GENERAL", '
+        '"risk": "LOW", "rationale": "x"}'
+    )
+    classifier = DataClassifier(FakeClient(response))
+    assert classifier.classify("texto").confidence is None
 
 
 def test_json_envuelto_en_markdown():
