@@ -1,4 +1,4 @@
-# Mercado Libre — Challenge Técnico DataSec (Sr. Cybersecurity)
+# Challenge Técnico DataSec (Sr. Cybersecurity)
 
 Soluciones a los 4 desafíos del challenge técnico.
 
