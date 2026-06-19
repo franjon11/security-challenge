@@ -46,14 +46,14 @@ def _count_mines_around(board: list, row: int, col: int) -> int:
 
 def count_neighbouring_mines(board: list) -> list:
     """
-    Counts neighbouring mines for each cell in a Minesweeper board.
+    Cuenta las minas vecinas de cada celda de un tablero de Buscaminas.
 
     Parameters:
-        board (list): A 2D list where 0 represents an empty space and 1 represents a mine
+        board (list): lista 2D donde 0 representa un espacio vacío y 1 una mina.
 
     Returns:
-        list: A 2D list where each cell contains the count of neighbouring mines,
-              or 9 if the cell contains a mine
+        list: lista 2D donde cada celda contiene la cantidad de minas vecinas,
+              o 9 si la celda contiene una mina.
     """
     # Tablero vacío: se devuelve tal cual (mismas dimensiones, sin celdas).
     if not board or not board[0]:

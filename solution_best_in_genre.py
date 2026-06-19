@@ -73,19 +73,19 @@ def _rating_of(show: dict) -> float:
 
 def bestInGenre(genre: str) -> str:
     """
-    Finds the highest-rated TV series in the given genre.
+    Encuentra la serie de TV mejor puntuada dentro del género indicado.
 
     Parameters:
-        genre (str): The genre to search for (e.g., 'Action', 'Comedy', 'Drama')
+        genre (str): el género a buscar (por ej.: 'Action', 'Comedy', 'Drama').
 
     Returns:
-        str: The name of the highest-rated show in the genre. If there is a tie,
-             returns the alphabetically lower name. Returns the name as a string.
+        str: el nombre de la serie mejor puntuada del género. Ante empate,
+             devuelve el nombre alfabéticamente menor. Devuelve el nombre como string.
 
     Notes:
-        - Ties are broken by alphabetical order of the show name
-        - Genre matching is case-insensitive
-        - Shows can have multiple genres (comma-separated)
+        - Los empates se resuelven por orden alfabético del nombre de la serie.
+        - El match de género es case-insensitive.
+        - Una serie puede tener varios géneros (separados por coma).
     """
     target_genre = genre.strip().lower()
 
